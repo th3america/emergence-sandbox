@@ -1,0 +1,17 @@
+let chosen=new Set(),edges=[];
+function renderAssembly(){
+ const box=$('pieces');box.replaceChildren();
+ for(const p of state.pieces){const label=el('label',undefined,'record');const check=el('input');check.type='checkbox';check.checked=chosen.has(p.id);check.onchange=()=>{if(check.checked)chosen.add(p.id);else{chosen.delete(p.id);edges=edges.filter(e=>e.from!==p.id&&e.to!==p.id)}renderEdges()};label.append(check,el('strong',p.name+' · '+p.type),el('p',p.function),el('small',p.scope));box.append(label)}
+ renderEdges();$('creations').replaceChildren();
+ for(const c of [...state.creations].reverse()){const n=el('div',undefined,'record');n.append(el('h3',c.title),el('p',c.participant+' · created artifact · claims unverified'),el('pre',c.artifact));const details=el('details');details.append(el('summary','Assembly, governance and claims'),el('pre',JSON.stringify(c,null,2)));n.append(details);const download=el('button','Download creation');download.onclick=()=>saveJSON(c,'creation-'+c.id+'.json');const test=el('button','Take claims to test workbench');test.onclick=()=>{activate('workbench');$('goal').value='custom';$('custom-panel').classList.remove('hidden');$('custom-fixture').value=JSON.stringify({goal:c.function+' Claims: '+c.claims.join('; '),left:{},right:{},expected:null},null,2);notice('Define independent inputs and expected output, then supply an executable proposal. Source creation: '+c.id)};n.append(download,test);$('creations').append(n)}
+}
+function renderEdges(){
+ for(const id of ['edge-from','edge-to']){const box=$(id),value=box.value;box.replaceChildren();for(const p of state.pieces.filter(x=>chosen.has(x.id))){const o=el('option',p.name);o.value=p.id;box.append(o)}if(chosen.has(value))box.value=value}
+ $('edges').replaceChildren();for(const [i,e] of edges.entries()){const n=el('div',e.from+' → '+e.relation+' → '+e.to,'record');const b=el('button','Remove');b.onclick=()=>{edges.splice(i,1);renderEdges()};n.append(b);$('edges').append(n)}
+}
+$('edge-add').onclick=()=>{const from=$('edge-from').value,to=$('edge-to').value;if(!from||!to)return notice('Select pieces first.');edges.push({from,to,relation:$('edge-kind').value});renderEdges()};
+for(const t of ['concept','lens','method','context','rule','memory','capability','creation']){const o=el('option',t);o.value=t;$('piece-type').append(o)}
+$('piece-save').onclick=async()=>{try{const p={type:$('piece-type').value};for(const k of ['name','function','content','scope','provenance'])p[k]=$('piece-'+k).value;await api('/api/assembly/piece',p);await refresh();notice('Functional piece saved.')}catch(e){notice(e.message)}};
+$('assemble').onclick=async()=>{try{const packet=await api('/api/assembly/assemble',{goal:$('assembly-goal').value,pieces:[...chosen],relationships:edges,configuration:$('assembly-config').value,starting_state:$('assembly-start').value,environment:$('assembly-env').value});$('packet-text').value=JSON.stringify(packet,null,2);$('creation-json').value=JSON.stringify(packet.reply_contract,null,2);$('packet-panel').classList.remove('hidden');$('packet-panel').scrollIntoView();await refresh();notice('Assembly saved. Copy the packet to your synthesis conversation and return its reply.')}catch(e){notice(e.message)}};
+$('creation-save').onclick=async()=>{try{await api('/api/assembly/creation',JSON.parse($('creation-json').value));await refresh();notice('Creation saved with lineage. Available as an ingredient; claims remain unverified.')}catch(e){notice(e.message)}};
+

@@ -1,0 +1,15 @@
+{
+  "state": "implemented",
+  "specification": "PLANNED-UPGRADE.md",
+  "implemented": [
+    "piece library",
+    "relationship assembly",
+    "synthesis packet",
+    "creation import",
+    "contribution and governance records",
+    "reuse lineage",
+    "test handoff"
+  ],
+  "synthesis_provider": "explicit conversation bridge; no automatic model connection",
+  "runtime_changed": true
+}

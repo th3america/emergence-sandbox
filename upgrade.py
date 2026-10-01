@@ -1,0 +1,17 @@
+from pathlib import Path
+p=Path(__file__).resolve().parent
+def edit(name,old,new):
+ f=p/name;s=f.read_text(encoding='utf-8');assert old in s;f.write_text(s.replace(old,new),encoding='utf-8')
+edit('app.py','from evaluate_run_pair import evaluate_run_pair','from evaluate_run_pair import evaluate_run_pair\nfrom assembly import library, act')
+edit('app.py',"'version':1","'version':2")
+edit('app.py',"'tools':list(lab.tools().values())","'pieces':library(lab),'assemblies':lab.items('assembly'),'creations':lab.items('creation'),'tools':list(lab.tools().values())")
+edit('app.py',"if self.path=='/api/run':result=lab.run(data)","if self.path.startswith('/api/assembly/'):\n                    result=act(lab,self.path.rsplit('/',1)[1],data)\n                elif self.path=='/api/run':result=lab.run(data)")
+edit('web/index.html','<nav>','<nav><button data-tab="assembly" class="active">00 · Assembly</button>')
+edit('web/index.html','data-tab="workbench" class="active"','data-tab="workbench"')
+edit('web/index.html','id="workbench" class="tab"','id="workbench" class="tab hidden"')
+edit('web/index.html','<div id="workbench"',"""<div id="assembly" class="tab"><section class="card"><span class="eyebrow">FUNCTIONAL LEGO BOX</span><h2>What can we make it do?</h2><p>Choose lenses, concepts, methods, context and previous creations. Arrange their relationships, then synthesize through your chosen AI conversation.</p><div id="pieces"></div><label>Desired creation<textarea id="assembly-goal" placeholder="Use these pieces to create…"></textarea></label><label>Configuration<input id="assembly-config" placeholder="How should the pieces work together?"></label><label>Starting state<input id="assembly-start"></label><label>Environment<input id="assembly-env" value="Local design workspace"></label><h3>Relationships</h3><div class="actions"><select id="edge-from" aria-label="From piece"></select><select id="edge-kind" aria-label="Relationship"><option>frames</option><option>bounds</option><option>informs</option><option>enables</option><option>transforms</option><option>constrains</option></select><select id="edge-to" aria-label="To piece"></select><button id="edge-add">Add relationship</button></div><div id="edges"></div><button id="assemble" class="primary">Prepare synthesis packet</button><p class="muted">This prepares the complete configuration for one synthesis. Send it through the bridge; no model is called automatically.</p></section><section class="card"><h3>Add a functional piece</h3><label>Type<select id="piece-type"></select></label><label>Name<input id="piece-name"></label><label>Function<input id="piece-function"></label><label>Content<textarea id="piece-content"></textarea></label><label>Scope<input id="piece-scope"></label><label>Provenance<input id="piece-provenance"></label><button id="piece-save">Save piece</button></section><section class="card"><h3>Resolve a creation</h3><p>Paste the synthesis reply. A saved design is a creation; its functional claims remain unverified until supported by tests.</p><textarea id="creation-json" aria-label="Synthesis reply"></textarea><button id="creation-save">Save creation as a reusable piece</button><div id="creations"></div></section></div>
+<div id="workbench" """.rstrip())
+edit('web/app.js',"$('tool-count').textContent=state.tools.length;","renderAssembly();$('tool-count').textContent=state.tools.length;")
+(p/'web/app.js').write_text((p/'web/app.js').read_text(encoding='utf-8')+'\n'+(p/'assembly-ui.js').read_text(encoding='utf-8'),encoding='utf-8')
+print('Assembly integrated')
+
