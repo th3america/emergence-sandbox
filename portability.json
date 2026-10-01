@@ -1,0 +1,24 @@
+{
+  "protocol": "PortableScaffold/1",
+  "project": "emergence-sandbox",
+  "entrypoints": ["app.py", "start.ps1", "Open Emergence Sandbox.cmd"],
+  "minimum_runtime": {"python": "3.10", "node": "syntax-check only"},
+  "configuration": ["--port", "--data", "start.ps1:-Python", "EMERGENCE_PYTHON"],
+  "state": ["SQLite database selected by --data", "generated logs and data are untracked"],
+  "adapters": ["python-launcher", "loopback-http", "sqlite-state", "browser-opener", "explicit-ai-handoff"],
+  "invariants": [
+    "bounded recipe interpreter",
+    "loopback host and origin checks",
+    "session token on state-changing requests",
+    "explicit proposal attribution",
+    "persistent stop and provenance semantics",
+    "fixture success is not a general emergence claim"
+  ],
+  "verification_commands": [
+    "python -m unittest discover -v",
+    "node --check web/app.js",
+    "python app.py --help"
+  ],
+  "known_platform_variance": ["browser opening", "Python executable discovery", "SQLite filesystem locking"],
+  "authority_boundary": "No automatic model dispatch or external consequential action."
+}

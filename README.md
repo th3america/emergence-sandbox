@@ -4,6 +4,12 @@ Design specification: [functional Lego assembly and AGI principles review](PLANN
 
 A local experiment workbench built by Ember with Greyfoot, under Sparkitect Jason's direction.
 
+Adapting it to another operating system, runtime, storage layer, or AI bridge?
+Start with [PORTING.md](PORTING.md) and the machine-readable
+[`portability.json`](portability.json).
+The shared conversion method lives in
+[Sparkitecture001](https://github.com/th3america/Sparkitecture001/blob/main/CONVERSION-GUIDE.md).
+
 Open http://127.0.0.1:8774/ while the server is running. For later sessions use `Open Emergence Sandbox.cmd`, or run `python app.py --port 8774` with Python 3.10+. The launcher uses the installed bundled Python and does not change execution policy. No third-party packages are needed.
 
 ## Experiment loop
